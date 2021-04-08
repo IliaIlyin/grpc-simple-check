@@ -19,6 +19,8 @@ void RunServer()
     ServerBuilder builder;
     // Listen on the given address without any authentication mechanism.
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+    builder.AddChannelArgument(GRPC_ARG_HTTP2_MAX_PINGS_WITHOUT_DATA,0);
+    builder.AddChannelArgument(GRPC_ARG_HTTP2_MIN_RECV_PING_INTERVAL_WITHOUT_DATA_MS,5000);
     // Register "service" as the instance through which we'll communicate with
     // clients. In this case it corresponds to an *synchronous* service.
     builder.RegisterService(&service);
@@ -37,9 +39,11 @@ Status GreeterServiceImpl::test(ServerContext* context, const Request* request, 
     int i=0;
     while(true)
     {
+/*
         Response resp;
         resp.set_id(i++);
         server_writer->Write(resp);
+      */
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     return Status::OK;
